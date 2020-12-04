@@ -32,14 +32,13 @@ func decodeNone(b []byte) ([]byte, error) {
 
 func decodeZlib(data []byte) ([]byte, error) {
 	b := make([]byte, 0)
-
 	in := bytes.NewBuffer(data)
 	out := bytes.NewBuffer(b)
 	r, err := zlib.NewReader(in)
-	defer r.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer r.Close()
 	io.Copy(out, r)
 	return out.Bytes(), nil
 }

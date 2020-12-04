@@ -25,7 +25,7 @@ type BundleHeader struct {
 	Connection uint16    `json:"connection_type"`
 	Count      uint16    `json:"message_count"`
 	Encoding   uint16    `json:"encoding"`
-	Unknown    [6]byte   `json:"-"`
+	Unknown    [4]byte   `json:"-"`
 }
 
 // NewBundleHeader returns a new header from a given byte array.  The byte
