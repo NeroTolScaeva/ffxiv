@@ -45,6 +45,13 @@ type MessageHeader struct {
 // IsMessage exists for anything embedding a message header
 func (MessageHeader) IsMessage() {}
 
+// MessageBytes is a generic message containing a header and raw
+// bytes
+type MessageBytes struct {
+	MessageHeader
+	Bytes []byte `json:"bytes"`
+}
+
 // MessageMarketTaxRates is a message
 type MessageMarketTaxRates struct {
 	MessageHeader
@@ -93,7 +100,7 @@ type MarketItemListing struct {
 // MessageMarketBoardItemListing is a message
 type MessageMarketBoardItemListing struct {
 	MessageHeader
-	Listing           [10]MarketItemListing `json:"listing"` //TODO -- unknown if fixed or variable
+	Listing           [10]MarketItemListing `json:"listing"`
 	ListingIndexEnd   uint8                 `json:"listing_index_end"`
 	ListingIndexStart uint8                 `json:"listing_index_start"`
 	RequestID         uint16                `json:"request_id"`
@@ -176,4 +183,17 @@ func NewMessage(b []byte) (Message, error) {
 		return nil, errors.New("unrecognized message type")
 	}
 	return mp(b)
+}
+
+// NewMessageBytes returns a new message from a given byte array containing a message
+// header and the raw bytes for the remaining message.
+func NewMessageBytes(b []byte) (Message, error) {
+	mh, err := NewMessageHeader(b[:MessageHeaderSize])
+	if err != nil {
+		return nil, err
+	}
+	return &MessageBytes{
+		MessageHeader: *mh,
+		Bytes:         b[MessageHeaderSize:],
+	}, nil
 }
